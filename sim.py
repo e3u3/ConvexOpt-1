@@ -27,7 +27,7 @@ def gaus_mean_width_S_ns(n,s):
     inner_array = []
     density = s/n
     rvs = sp.stats.uniform(loc=-50, scale = 100 ).rvs
-    for j in range(0, 50*n):
+    for j in range(0, 500*50):
         u_1 =  sp.sparse.random(n,1,density=density,data_rvs=rvs).todense()
         u_2 = sp.sparse.random(n,1,density=density, data_rvs=rvs).todense()
         inner = np.transpose(g)*(u_1/np.linalg.norm(u_1) - u_2/np.linalg.norm(u_2)) # u in S_ns - S_ns
@@ -51,7 +51,7 @@ def gaus_mean_width_S_ns_1(n,s):
     inner_array = []
     density = s/n
     rvs = sp.stats.uniform(loc=-50, scale = 100 ).rvs
-    for j in range(0, 50*n):
+    for j in range(0, 500*50):
         # change u_1 and u_2 to satisfy the restrictions of xi >= 0
         u_1 =  sp.sparse.random(n,1,density=density, data_rvs=rvs).todense()
         u_1 = abs(u_1)
@@ -69,7 +69,7 @@ def gaus_mean_width_S_ns_2(n,s):
     inner_array = []
     density = s/n
     rvs = sp.stats.uniform(loc= np.random.randint(low=-50,high=100) , scale = 0 ).rvs
-    for j in range(0, 50*n):
+    for j in range(0, 500*50):
         u_1 =  sp.sparse.random(n,1,density=density, data_rvs=rvs).todense()
         u_2 = sp.sparse.random(n,1,density=density, data_rvs = rvs).todense()
         inner = np.transpose(g)*(u_1/np.linalg.norm(u_1) - u_2/np.linalg.norm(u_2)) # u in S_ns - S_ns
@@ -83,7 +83,7 @@ def gaus_mean_width_S_ns_3(n,s):
     inner_array = []
     density = s/n
     rvs = sp.stats.uniform(loc= np.random.randint(low=-50,high=100) , scale = 0 ).rvs
-    for j in range(0, 50*n):
+    for j in range(0, 500*50):
         u_1 =  sp.sparse.random(n,1,density=density,data_rvs=rvs).todense()
         m1 = np.random.randint(low= 0, high = n+1)
         idx1 = np.random.choice(n,m1, replace=False)
@@ -94,27 +94,31 @@ def gaus_mean_width_S_ns_3(n,s):
         m2 = np.random.randint(low= 1, high = n+1)
         idx2 = np.random.choice(n,m2, replace=False)
         u_2[idx2] = -u_2[idx2]
-        inner = np.transpose(g)*(u_1/np.linalg.norm(u_1) - u_2/np.linalg.norm(u_2)) # u in S_ns - S_ns
-        inner_array.append( inner )
+        if(np.linalg.norm(u_1) != 0 and np.linalg.norm(u_2) !=0):
+            inner = np.transpose(g)*(u_1/np.linalg.norm(u_1) - u_2/np.linalg.norm(u_2)) # u in S_ns - S_ns
+            inner_array.append( inner )
     return max(inner_array)
 
 
 s = 5
 n_array = [i for i in range(s,40)]
-bound =[]
+bound_1 =[]
+bound_2 =[]
 g_mean_Sn5 = []
 g_mean_Sn5_1 = []
 g_mean_Sn5_2 = []
 g_mean_Sn5_3 = []
 
 for i in n_array:
-    bound.append(gaus_mw_low_up_bd(i,s))
+    bound_1.append(gaus_mw_low_up_bd(i,s))
+    bound_2.append(5*gaus_mw_low_up_bd(i,s))
     g_mean_Sn5.append(np.float(gaus_mean_width_S_ns(i,s)) )
     g_mean_Sn5_1.append(np.float(gaus_mean_width_S_ns_1(i,s)))
     g_mean_Sn5_2.append(np.float(gaus_mean_width_S_ns_2(i,s)))
     g_mean_Sn5_3.append(np.float(gaus_mean_width_S_ns_3(i,s)))
 
-plt.plot(n_array,bound, label='bound_coeff')
+plt.plot(n_array,bound_1, label='bound_low')
+plt.plot(n_array,bound_2, label='bound_high')
 plt.plot(n_array,g_mean_Sn5, label='S_n5')
 plt.plot(n_array,g_mean_Sn5_1, label='S_n5_1')
 plt.plot(n_array,g_mean_Sn5_2, label='S_n5_2')
