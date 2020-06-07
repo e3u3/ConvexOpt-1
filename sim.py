@@ -17,9 +17,6 @@ import cvxpy as cp
 
 
 # Define the constraints for the sparse signal set
-#S_ns_constraints = [cp.norm(x,0) <= s , cp.norm(x,2)<= 1]
-
-
 def gaus_mean_width_S_ns(n,s):
     # by roman vershynin 3.5.3
     # with high probability w(K) is about w(K,g) = sup <g,u>, u in K-K
@@ -27,6 +24,7 @@ def gaus_mean_width_S_ns(n,s):
     inner_array = []
     density = s/n
     rvs = sp.stats.uniform(loc=-50, scale = 100 ).rvs
+    #S_ns_constraints = [cp.norm(x,0) <= s , cp.norm(x,2)<= 1]
     for j in range(0, 500*50):
         u_1 =  sp.sparse.random(n,1,density=density,data_rvs=rvs).todense()
         u_2 = sp.sparse.random(n,1,density=density, data_rvs=rvs).todense()
@@ -35,10 +33,7 @@ def gaus_mean_width_S_ns(n,s):
     return max(inner_array)
 
 
-# plot w(S_ns) versus n with its upper bound and lower bound given by Lemma 2.3
 # bounds cs log(2n/s) =< w^2(S_ns) =< Cs log(2n/s)
-
-# returns the lower bound and then upper bound constant not with c and C
 def gaus_mw_low_up_bd(n,s):
     return np.sqrt( np.log(2*n/s) )
 
@@ -63,7 +58,6 @@ def gaus_mean_width_S_ns_1(n,s):
 
 
 
-# Check this to see if it is really what is wanted later and confirm
 def gaus_mean_width_S_ns_2(n,s):
     g = sp.stats.multivariate_normal.rvs(np.zeros(n))
     inner_array = []
@@ -99,6 +93,9 @@ def gaus_mean_width_S_ns_3(n,s):
             inner_array.append( inner )
     return max(inner_array)
 
+
+# Testing and plotting
+# -------------------------
 
 s = 5
 n_array = [i for i in range(s,40)]
